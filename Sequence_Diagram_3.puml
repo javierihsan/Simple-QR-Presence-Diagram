@@ -1,0 +1,40 @@
+@startuml
+title Process of Student Submitting Leave Document
+
+actor Student
+boundary LeaveWebsite
+control LeaveController
+entity LeaveDocument
+
+Student -> LeaveWebsite: Open leave page
+activate LeaveWebsite
+LeaveWebsite -> LeaveController: Request leave page
+activate LeaveController
+LeaveController -> LeaveWebsite: Respond with leave page
+deactivate LeaveController
+Student -> LeaveWebsite: Select course and meeting number
+LeaveWebsite -> LeaveController: Send course and meeting data
+activate LeaveController
+LeaveController -> LeaveWebsite: Display leave page with reason form and document upload
+deactivate LeaveController
+Student -> LeaveWebsite: Fill in leave reason and upload leave document
+Student -> LeaveWebsite: Click "Save"
+LeaveWebsite -> LeaveController: Send reason and leave document
+activate LeaveController
+
+alt Invalid Document
+  LeaveController -> LeaveWebsite: Display error message "Invalid document"
+  LeaveWebsite -> Student: Request to re-upload document
+  deactivate LeaveController
+  deactivate LeaveWebsite
+else Valid Document
+  LeaveController -> LeaveDocument: Save leave reason and document
+  activate LeaveDocument
+  LeaveDocument -> LeaveController: Leave reason and document saved
+  deactivate LeaveDocument
+  LeaveController -> LeaveWebsite: Confirm leave and document successfully saved
+  deactivate LeaveController
+  LeaveWebsite -> Student: Display confirmation message
+  deactivate LeaveWebsite
+end
+@enduml
