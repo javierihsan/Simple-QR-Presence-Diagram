@@ -1,0 +1,73 @@
+@startuml
+title Class Diagram for Attendance and Leave Process
+
+' Entities
+class Lecturer {
+  + name : String
+  + nip : String
+  + generateQR() : QRCode
+}
+
+class Student {
+  + name : String
+  + studentID : String
+  + scanQR(qr : QRCode)
+  + submitLeave(leave : Leave)
+}
+
+class Admin {
+  + verifyLeave(leave : Leave)
+}
+
+class Course {
+  + name : String
+  + code : String
+}
+
+class Session {
+  + date : Date
+  + material : String
+}
+
+class Leave {
+  + reason : String
+  + status : String
+  + attachDocument(document : LeaveDocument)
+}
+
+class LeaveDocument {
+  + file : File
+  + validate() : Boolean
+}
+
+class QRCode {
+  + code : String
+  + validate() : Boolean
+}
+
+' Controllers
+class SessionController {
+  + createSession(course : Course, date : Date, material : String) : Session
+}
+
+class AttendanceController {
+  + validateQR(qr : QRCode) : Boolean
+}
+
+class LeaveVerificationController {
+  + verify(leave : Leave) : String
+}
+
+' Relationships with precise multiplicities
+Lecturer "1" -- "0...*" Course : "teaches"
+Course "1" -- "1...*" Session : "contains"
+Session "1" -- "1" QRCode : "uses"
+Student "1" -- "0...*" Course : "enrolls in"
+Student "1" -- "0...*" Leave : "submits"
+Leave "1" -- "1" LeaveDocument : "attaches"
+Admin "1" -- "0...*" Leave : "verifies"
+Leave "1" -- "1" LeaveVerificationController : "is processed by"
+QRCode "1" -- "1" AttendanceController : "is validated by"
+Session "1" -- "1" SessionController : "is created by"
+
+@enduml
