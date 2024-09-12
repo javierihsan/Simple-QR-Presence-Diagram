@@ -1,0 +1,43 @@
+@startuml
+title Process of Lecturer Setting Up a Meeting and Displaying QR
+
+actor Lecturer
+boundary Website
+control MeetingController
+entity QRPresensi
+
+Lecturer -> Website: Open "Meeting" page
+activate Website
+Website -> MeetingController: Request "Meeting" page
+activate MeetingController
+MeetingController -> Website: Respond with "Meeting" page
+deactivate MeetingController
+Lecturer -> Website: Click "Add New Meeting"
+Website -> MeetingController: Request new meeting input page
+activate MeetingController
+MeetingController -> Website: Respond with new meeting input page
+deactivate MeetingController
+Lecturer -> Website: Fill in date and meeting description
+Lecturer -> Website: Click "Save"
+Website -> MeetingController: Send meeting data
+activate MeetingController
+
+alt Incorrect Date Format
+  MeetingController -> Website: Show error message "Incorrect date format"
+  deactivate MeetingController
+  deactivate Website
+else Correct Date Format
+  MeetingController -> QRPresensi: Save data and generate QR code
+  activate QRPresensi
+  QRPresensi -> MeetingController: QR saved
+  deactivate QRPresensi
+  MeetingController -> Website: Update page with "Display QR" option
+  deactivate MeetingController
+  Lecturer -> Website: Click "Display QR"
+  Website -> MeetingController: Request QR page
+  activate MeetingController
+  MeetingController -> Website: Respond with QR page and QR code
+  deactivate MeetingController
+  deactivate Website
+end
+@enduml
