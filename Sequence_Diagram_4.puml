@@ -1,0 +1,47 @@
+@startuml
+title Process of Admin Verifying Leave Request and Attached Document
+
+actor Admin
+boundary LeaveWebsiteAdmin
+control LeaveVerificationController
+entity LeaveDocument
+
+Admin -> LeaveWebsiteAdmin: Open admin leave page
+activate LeaveWebsiteAdmin
+LeaveWebsiteAdmin -> LeaveVerificationController: Request leave data
+activate LeaveVerificationController
+LeaveVerificationController -> LeaveWebsiteAdmin: Respond with student leave request list
+deactivate LeaveVerificationController
+Admin -> LeaveWebsiteAdmin: Click on a leave request
+LeaveWebsiteAdmin -> LeaveVerificationController: Request leave details
+activate LeaveVerificationController
+LeaveVerificationController -> LeaveWebsiteAdmin: Respond with leave details including reason and document
+deactivate LeaveVerificationController
+Admin -> LeaveWebsiteAdmin: Click "View Document"
+LeaveWebsiteAdmin -> LeaveVerificationController: Request leave document
+activate LeaveVerificationController
+LeaveVerificationController -> LeaveDocument: Retrieve leave document data
+activate LeaveDocument
+LeaveDocument -> LeaveVerificationController: Return leave document data
+deactivate LeaveDocument
+LeaveVerificationController -> LeaveWebsiteAdmin: Display leave document
+deactivate LeaveVerificationController
+
+alt Document Incomplete or Invalid
+  LeaveWebsiteAdmin -> Admin: Display error message "Document is incomplete or invalid"
+  Admin -> LeaveWebsiteAdmin: Request student to re-upload document
+  deactivate LeaveWebsiteAdmin
+else Valid Document
+  Admin -> LeaveWebsiteAdmin: Select "Leave Approved" and click "Save"
+  LeaveWebsiteAdmin -> LeaveVerificationController: Send verification status
+  activate LeaveVerificationController
+  LeaveVerificationController -> LeaveDocument: Save verification status
+  activate LeaveDocument
+  LeaveDocument -> LeaveVerificationController: Verification status saved
+  deactivate LeaveDocument
+  LeaveVerificationController -> LeaveWebsiteAdmin: Confirm leave successfully verified
+  deactivate LeaveVerificationController
+  LeaveWebsiteAdmin -> Admin: Display confirmation message
+  deactivate LeaveWebsiteAdmin
+end
+@enduml
