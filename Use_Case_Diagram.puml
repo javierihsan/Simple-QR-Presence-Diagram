@@ -1,0 +1,33 @@
+@startuml
+
+left to right direction
+
+actor a1 as "Lecturer"
+actor a2 as "Student"
+actor a3 as "Admin"
+
+rectangle sys as "QR Attendance System" #C0C0C0 {
+
+  usecase uc1 as "Scan QR" #83d3f6
+  usecase uc2 as "Upload Leave Document" #83d3f6
+  usecase uc3 as "Generate QR" #7a97ca
+  usecase uc4 as "Display QR" #7a97ca
+  usecase uc5 as "Click Attendance" #7a97ca
+  usecase uc6 as "Input Date and Material" #7a97ca
+  usecase uc7 as "Verify Leave Document" #ffcb0c
+  
+}
+
+a1 --> uc3
+a1 --> uc5
+a1 --> uc4
+a2 --> uc1
+a2 --> uc2
+a3 --> uc7
+
+uc7 .> uc2 :  <<include>>
+uc6 <. uc3 :  <<include>>
+uc4 .> uc5 :  <<extend>>
+uc1 <. uc4 :  <<extend>>
+
+@enduml
