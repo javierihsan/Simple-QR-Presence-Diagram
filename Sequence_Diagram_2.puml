@@ -1,0 +1,36 @@
+@startuml
+title Process of Student Performing QR Attendance
+
+actor Student
+boundary CampusApp
+control AttendanceController
+entity QRCode
+
+Student -> CampusApp: Open application
+activate CampusApp
+CampusApp -> Student: Display main page
+Student -> CampusApp: Click "Attendance"
+CampusApp -> AttendanceController: Request attendance page
+activate AttendanceController
+AttendanceController -> CampusApp: Display attendance page with active camera
+deactivate AttendanceController
+Student -> CampusApp: Scan QR
+CampusApp -> AttendanceController: Send QR data
+activate AttendanceController
+
+alt QR Code Invalid
+  AttendanceController -> CampusApp: Display error message "QR code invalid"
+  CampusApp -> Student: Request to rescan QR
+  deactivate AttendanceController
+  deactivate CampusApp
+else QR Code Valid
+  AttendanceController -> QRCode: Validate QR and record attendance
+  activate QRCode
+  QRCode -> AttendanceController: QR valid, attendance recorded
+  deactivate QRCode
+  AttendanceController -> CampusApp: Send confirmation of successful attendance
+  CampusApp -> Student: Display successful attendance message
+  deactivate AttendanceController
+  deactivate CampusApp
+end
+@enduml
